@@ -35,18 +35,19 @@
                 to featured content or information.</p>
             <hr class="my-4">
             <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-            <a class="btn btn-danger" btn-lg" href="#" role="button">Learn more</a>
+            <a class="btn btn-danger" btn-lg href="#" role="button">Learn more</a>
         </div>
-        <div class="row row-cols-1 row-cols-md-3">
+
+        <div class="row row-cols-1 row-cols-md-3" id="movie-list">
             <div class="col mb-4">
                 <div class="card">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <button type="button" class="btn btn-success" id="review-btn" onclick="review()">리뷰 보기</button>
-                    </div>
+                  <img src="..." class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <button type="button" class="btn btn-success" id="review-btn" onclick="review()">리뷰 보기</button>
+                  </div>
                 </div>
-            </div>
+              </div>
         </div>
     </div>
 
@@ -77,12 +78,50 @@
         integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
         crossorigin="anonymous"></script>
 
-    <!--script-->
+    <!-- script-->
     <script>
-        function review() {
+    $(document).ready(function(){
+        console.log("시작!")
+
+    })
+
+    $.ajax({
+        url:"https://api.themoviedb.org/3/movie/popular?api_key=a595769a9681f20d1d1cb32e4cf645f1&language=en-US&page=1",
+        data:{"key":"value"},
+        type:"POST",
+        success:function(json){
+            console.log(json)
+            $("#movie-list").html('');
+            let movie_list = json.results;
+
+            for(let i=0; i<movie_list.length; i++){
+                let card = `
+                    <div class="col mb-4">
+                        <div class="card">
+                            <img src="${'https://image.tmdb.org/t/p/w500/'+movie_list[i].poster_path}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">${movie_list[i].original_title}</h5>
+                                <button type="button" class="btn btn-success" id="review-btn" onclick="review(${move_list[i].id})">리뷰 보기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+
+                $("#movie-list").append(card);
+
+                
+            }
+
+        },
+        error:function(err){
+
+        }
+    })
+
+        function review(id) {
             $('#review-modal').modal('show');
         }
-    </script>
+    </script> 
 </body>
 
 </html>
