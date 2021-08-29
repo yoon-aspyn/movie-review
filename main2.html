@@ -8,6 +8,9 @@
     <title>영화 리뷰 사이트</title>
 
     <!--bootstrap / jquery / css-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
@@ -18,29 +21,28 @@
 
 </head>
 
-<body>
     <!--nav-->
-    <nav class="navbar navbar-light bg-light">
-        <span class="navbar-brand mb-0 h1">영화 리뷰 사이트</span>
+    <nav class="navbar navbar-light bg-light" id="navbar" style="background-color: black !important;">
+        <span class="navbar-brand mb-0 h1" style="color: white;">영화 리뷰 사이트</span>
     </nav>
 
     <div class="container">
-        <div class="jumbotron jumbotron-fluid" id="jumbotron">
+        <div class="jumbotron jumbotron-fluid" id="jumbotron" style="background-color: black !important;">
             <div class="container">
-                <h1 class="display-4">영화 리뷰를 한눈에!</h1>
-                <p class="lead">현재 미국의 박스오피스 순위와, 빠르고 쉽게 리뷰를 확인할 수 있어요.</p>
+                <h1 class="display-4"  style="color: white;" >영화 리뷰를 한눈에!</h1>
+                <p class="lead"  style="color: white;" >현재 미국의 박스오피스 순위와 리뷰를 빠르고 간편하게 확인할 수 있어요.</p>
             </div>
         </div>
 
         <div class="row row-cols-1 row-cols-md-3" id="movie-list">
             <div class="col mb-4">
                 <div class="card">
-                    <img src="..." class="card-img-top" alt="...">
+                    <img src="..." class="card-img-top" id="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">Card title</h5>
                         <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
                             additional content. This content is a little bit longer.</p>
-                            <button type="button" class="btn btn-outline-dark" id="btn" onclick="review()">리뷰 보기</button>
+                        <button type="button" class="btn btn-outline-dark" id="btn" onclick="review()">리뷰 보기</button>
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">Last updated 3 mins ago</small>
@@ -50,80 +52,116 @@
         </div>
     </div>
 
-<!--review modal-->
-<div class="modal" id="review-modal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+    <!--review modal-->
+    <div class="modal" id="review-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">후기</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="text" class="form-control" id="review" style="width: 70%;">
+                    <button type="button" class="btn btn-primary" onclick="addReview()">후기 쓰기</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <p>Modal body text goes here.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
 
- <script>
-     
-     $(document).ready(function(){
-         console.log("start")
-     })
-     
+    <script>
 
-   $.ajax({
-       url : "https://api.themoviedb.org/3/movie/popular?api_key=a595769a9681f20d1d1cb32e4cf645f1&language=en-US&page=1",
-       data : {"key":"value"},
-       type : "POST",
-       success : function(json){
-           console.log(json)
-           $("#movie-list").html('')
+        let target_id = 0;
 
-           let movie_list = json.results;
-           for (let i=0; i<movie_list.length; i++){
-               let card =`<div class="col mb-4">
+        $(document).ready(function () {
+            console.log("start")
+        })
+
+
+        $.ajax({
+            url: "https://api.themoviedb.org/3/movie/popular?api_key=a595769a9681f20d1d1cb32e4cf645f1&language=en-US&page=1",
+            data: { "key": "value" },
+            type: "POST",
+            success: function (json) {
+                console.log(json)
+                $("#movie-list").html('')
+
+                let movie_list = json.results;
+                for (let i = 0; i < movie_list.length; i++) {
+                    let card = `<div class="col mb-4">
                 <div class="card">
-                    <img src="..." class="card-img-top" alt="...">
+                    <img src="${'https://image.tmdb.org/t/p/w500/' + movie_list[i].poster_path}" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">${movie_list[i].original_title}</h5>
                         <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
                             additional content. This content is a little bit longer.</p>
-                            <button type="button" class="btn btn-outline-dark" id="btn" onclick="review()">리뷰 보기</button>
+                            <button type="button" class="btn btn-outline-dark" id="btn" onclick="review(${movie_list[i].id})">리뷰 보기</button>
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">Last updated 3 mins ago</small>
                     </div>
                 </div>
             </div>`
-             
-            $("#movie-list").append(card)
-           }
 
-          
-
-        },
-
-       error : function(err){
-
-       }
-
-   })
+                    $("#movie-list").append(card)
+                }
 
 
-function review(){
-      $('#review-modal').modal('show')
 
-}
+            },
+
+            error: function (err) {
+
+            }
+
+        })
+
+        function review(id) {
+            target_id = id;
+            $.ajax({
+                url: `http://universeapi.net/review/list?movie_id=${id}`,
+                data: {},
+                type: "GET",
+                success: function (json) {
+                    console.log(json.data)
+                    let reviews = json.data;
+                    $(".modal-body").html('')
+                    for (let i = 0; i < reviews.length; i++) {
+                        $(".modal-body").append(`<p>${reviews[i].review}</p>`)
+                    }
+                }
+            })
+
+            $('#review-modal').modal('show');
+        }
 
 
-  </script>
+        function addReview() {
+            let review = $("#review").val();
+            let review_html = `<p>${review}</p>`
+
+            $.ajax({
+                url: `http://universeapi.net/review/add`,
+                data: {
+                    movie_id: target_id, //전협변수 지엽변수
+                    review: review
+                },
+                type: "POST",
+                success: function (json) {
+                    console.log(json);
+                }
+            })
+
+            $(".modal-body").append(review_html);
+            $("#review").val('');
+        }
+
+
+    </script>
 
 
 
